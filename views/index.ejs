@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/images/favicon.ico">
+
+    <title>Cyclists</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/stylesheets/index.css" rel="stylesheet">
+    
+    <!-- Fontawesome js link -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+
+    <!--naver map API -->
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=d1jKcnSfMmlnb4I9YewS"></script>
+  </head>
+
+  <body>
+    <header>
+      <div class="navbar navbar-dark bg-primary">
+        <div class="container d-flex justify-content-between">
+          <a href="/" class="navbar-brand d-flex align-items-center">
+            <img class="bicycle-img" src="/images/favicon.ico">
+            <strong>Cyclists</strong>
+          </a>
+          <span>
+            <% if(userid) { %>
+              <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-user"></i>
+                <%=name%>
+              </button>
+              <button class="btn btn-secondary" type="submit" onclick="window.location='/logout';">
+                <i class="fas fa-sign-out-alt"></i>
+                로그아웃
+              </button>
+            <% } else { %>
+              <button class="btn btn-secondary" type="submit" onclick="window.location='/signin';">
+                <i class="fas fa-sign-in-alt"></i>
+                로그인
+              </button>
+            <% } %>
+         </span>
+        </div>
+      </div>
+      <div class="collapse bg-primary" id="navbarHeader">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-8 col-md-7 py-4">
+                <h4 class="text-white">About</h4>
+                <p class="text-white">Add info</p>
+              </div>
+              <div class="col-sm-4 offset-md-1 py-4">
+                <h4 class="text-white">Contact</h4>
+                <ul class="list-unstyled">
+                  <li><a href="#" class="text-white">Like on Facebook</a></li>
+                  <li><a href="#" class="text-white">Email me</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+    </header>
+
+    <main role="main">
+      <section class="jumbotron text-center">
+        <div class="container">
+          <h2 class="jumbotron-heading">여러 사람들과 라이딩을 즐겨보세요!</h2>
+          <p class="lead text-muted">아래에서 지역을 선택하세요.</p>
+          <form method="post" action="/">
+            <div class="input-group">
+              <select class="custom-select" id="localselect" name="location">
+                <option >지역 선택</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+              </select>
+              <div class="input-group-append">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+              </div>
+              <div class="input-group-append">
+                  <% if(userid) { %>
+                    <button class="btn btn-outline-primary" type="button" data-toggle="modal" data-target="#writeModal">Write</button>
+                  <% } else { %>
+                    <a id="poper" tabindex="0" class="btn btn-outline-primary" role="button" data-toggle="popover" data-trigger="focus" title="로그인이 필요합니다!" data-content="로그인을 하고 직접 사람들을 모아보세요.">Write</a>
+                  <% } %>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <div class="album py-5 bg-light">
+        <div class="container">
+          <div class="row">
+            <!-- card start -->
+            <% for (i=0; i < articlenum; i++) { %>
+            <div class="col-md-6 col-lg-4">
+              <div class="card mb-4 box-shadow">
+                <div class="card-img-top" id="map" style="width:100%;height:320px"></div>
+                <div class="card-body">
+                  <p class="card-text"><%= articles[i].title%></p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#viewmodal" data-title=<%=articles[i].title%> data-content=<%=articles[i].content%>>View</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                    </div>
+                    <small class="text-muted">9 mins</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <% } %>
+            <!-- card end -->
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <footer class="text-muted">
+      <div class="container">
+        <p class="float-right">
+          <a href="#">Back to top</a>
+        </p>
+        <p>Please enjoy your trip...</p>
+      </div>
+    </footer>
+
+    <!-- Write modal start -->
+    <div class="modal fade" id="writeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">글쓰기</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form action="/write" method="POST">
+              <div class="form-group">
+                <input type="text" class="form-control" id="recipient-name" placeholder="제목" name="title">
+              </div>
+              <div class="form-group">
+                <select class="custom-select" id="inputGroupSelect04" name="location">
+                  <option selected>지역 선택</option>
+                  <option value="1">One</option>
+                  <option value="2">Two</option>
+                  <option value="3">Three</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <textarea class="form-control" id="message-text" rows="15" placeholder="내용" name="content"></textarea>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Write modal End -->
+
+    <!-- View modal start -->
+    <div class="modal fade" id="viewmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            content
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- View modal End-->
+
+
+
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/assets/js/vendor/popper.min.js"></script>
+    <script src="/dist/js/bootstrap.min.js"></script>
+    <script src="/assets/js/vendor/holder.min.js"></script>
+    <!-- My simple script -->
+    <script>
+      $('#poper').popover({
+        trigger: 'focus'
+      })
+
+      $("#localselect").val(<%=location%>);
+
+      $('#viewmodal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget) // Button that triggered the modal
+      var title = button.data('title')
+      var content = button.data('content')
+      // Extract info from data-* attributes
+      var modal = $(this)
+      modal.find('.modal-title').text(title)
+      modal.find('.modal-body').text(content)
+      })
+      // naver map script
+      var mapOptions = {
+          center: new naver.maps.LatLng(37.3595704, 127.105399),
+          zoom: 10
+      };
+      var map = new naver.maps.Map('map', mapOptions);
+
+    </script>
+  </body>
+</html>

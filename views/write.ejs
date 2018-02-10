@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/images/favicon.ico">
+
+    <title>Cyclists</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/stylesheets/signup.css" rel="stylesheet">
+  </head>
+  <body class="text-center signup">
+    <form action="/signup" method="POST">
+        <a href="/">
+            <img class="mb-4" src="/images/favicon.ico" alt="" width="72" height="72">
+        </a>
+        <h1 class="h3 mb-3 font-weight-normal">회원가입</h1>
+
+            <div class="form-group">
+                <label for="inputEmail4">ID</label>
+                <input type="id" class="form-control" id="inputEmail4" name="id" placeholder="ID">
+            </div>
+
+
+        <div class="form-group">
+            <label for="inputAddress">주소</label>
+            <input type="text" class="form-control" id="inputAddress" placeholder="서울시 도봉구">
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-8">
+                <label for="inputCity">이름</label>
+                <input type="text" class="form-control" id="inputCity" name="name">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputState">성별</label>
+                <select id="inputState" class="form-control" name="gender">
+                    <option selected>성별</option>
+                    <option value="man">남</option>
+                    <option value="woman">여</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+    </form>
+  </body>
+</html>
