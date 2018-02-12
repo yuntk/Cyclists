@@ -18,12 +18,12 @@ router.get('/', function(req, res, next) {
     "name": req.session.name,
   }
   console.log(obj)
-  if(req.session.location != undefined){
-    var sql = "select * from article where location=? order by num desc limit 12"
-    var arr = [req.session.location]
-  }else{
-    var sql = "select * from article order by num desc limit 12"
+  if (req.session.location == 0 || req.session.location == undefined) {
+    var sql = "select num,latitude,longitude,title,location,content,article.id as id,name,date from article join user where article.id = user.id order by num desc limit 12"
     var arr = []
+  }else{
+    var sql = "select num,latitude,longitude,title,location,content,article.id as id,name,date from article join user where article.id = user.id and location=? order by num desc limit 12"
+    var arr = [req.session.location]
   }
   pool.getConnection((err, conn)=>{
     if(err) { console.log(err); return next(); }
@@ -32,7 +32,28 @@ router.get('/', function(req, res, next) {
       if(err) { console.log(err); return next(); }
       obj.articlenum = result.length
       obj.articles = result
-      console.log(obj.articles)
+      /*
+      console.log("impolog",obj.articles.length)
+      for(i=0; i<obj.articles.length;i++){
+        (i)=>{
+        var sql = "select name from participant join user where num=? and participant.id = user.id"
+        var str = obj.articles[i].num+""
+        var arr = [str]
+        console.log(arr)
+        pool.getConnection((err, conn)=>{
+          if(err) { console.log(err); return next(); }
+          conn.query(sql, arr, (err, result)=>{
+            conn.release();
+            if(err) { console.log(err); return next(); }
+            console.log(result)
+            for (j=0; j<result.length;j++){
+              console.log(obj.articles[i].partin)
+            }
+          });
+        });  
+      }
+      }
+       */
       res.render('index', obj);
     });
   });
@@ -109,13 +130,15 @@ router.post('/write', (req,res,next)=>{
   let title = req.body.title;
   let location = req.body.location;
   let content = req.body.content;
+  let lati = req.body.latitude;
+  let long = req.body.longitude;
   if(req.session.userid != undefined){
     var id = req.session.userid;
   }else{
     res.send("<script>alert('로그인 후에 글을 작성해주세요.'); history.back();</script>")
   }
-  let sql = "insert into article(title,location,content,id,date) values(?,?,?,?,now())";
-  let arr = [title, location, content, id]
+  let sql = "insert into article(title,location,content,id,latitude,longitude,date) values(?,?,?,?,?,?,now())";
+  let arr = [title, location, content, id,lati,long]
   pool.getConnection((err, conn) => {
     if(err) { console.log(err); return next(); }
     conn.query(sql, arr, (err, result)=>{
@@ -132,4 +155,28 @@ router.get('/logout', (req,res,next)=>{
   req.session.destroy();
   res.redirect('/');
 });
+
+/**
+ * join group
+ */
+router.post('/joinin', (req,res,next)=>{
+  let num = req.body.num;
+  let id = req.body.id;
+  if(req.session.userid != undefined){
+  }else{
+    res.send("<script>alert('로그인 후에 참가신청을 해주세요.'); history.back();</script>")
+  }
+  let sql = "insert into participant(num,id,date) values(?,?,now())";
+  let arr = [num,id]
+  pool.getConnection((err, conn) => {
+    if(err) { console.log(err); return next(); }
+    conn.query(sql, arr, (err, result)=>{
+      conn.release();
+      if(err) { console.log(err); return next(); }
+      res.redirect('/');
+    });
+  });
+  
+});
+
 module.exports = router;

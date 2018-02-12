@@ -53,14 +53,14 @@
           <div class="container">
             <div class="row">
               <div class="col-sm-8 col-md-7 py-4">
-                <h4 class="text-white">About</h4>
-                <p class="text-white">Add info</p>
+                <h4 class="text-white">Profile</h4>
+                <p class="text-white">My name is <%=name%>. </p>
               </div>
               <div class="col-sm-4 offset-md-1 py-4">
-                <h4 class="text-white">Contact</h4>
+                <h4 class="text-white">Menu</h4>
                 <ul class="list-unstyled">
-                  <li><a href="#" class="text-white">Like on Facebook</a></li>
-                  <li><a href="#" class="text-white">Email me</a></li>
+                  <li><a href="#" class="text-white">내가 주최한 모임</a></li>
+                  <li><a href="#" class="text-white">내가 참가한 모임</a></li>
                 </ul>
               </div>
             </div>
@@ -76,7 +76,7 @@
           <form method="post" action="/">
             <div class="input-group">
               <select class="custom-select" id="localselect" name="location">
-                <option >지역 선택</option>
+                <option value="0">모든 지역</option>
                 <option value="1">One</option>
                 <option value="2">Two</option>
                 <option value="3">Three</option>
@@ -103,12 +103,12 @@
             <% for (i=0; i < articlenum; i++) { %>
             <div class="col-md-6 col-lg-4">
               <div class="card mb-4 box-shadow">
-                <div class="card-img-top" id="map" style="width:100%;height:320px"></div>
+                <div class="card-img-top" id="map<%=i%>" style="width:100%;height:320px"></div>
                 <div class="card-body">
                   <p class="card-text"><%= articles[i].title%></p>
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
-                      <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#viewmodal" data-title=<%=articles[i].title%> data-content=<%=articles[i].content%>>View</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#viewmodal" data-title=<%=articles[i].title%> data-content=<%=articles[i].content%> data-name=<%=articles[i].name%> data-loginid=<%=userid%> data-num=<%=articles[i].num%> data-partin=<%=articles[i].partin%>>View</button>
                       <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
                     </div>
                     <small class="text-muted">9 mins</small>
@@ -150,11 +150,19 @@
               </div>
               <div class="form-group">
                 <select class="custom-select" id="inputGroupSelect04" name="location">
-                  <option selected>지역 선택</option>
+                  <option value="0" selected>모든 지역</option>
                   <option value="1">One</option>
                   <option value="2">Two</option>
                   <option value="3">Three</option>
                 </select>
+              </div>
+              <div class="form-row">
+                  <div class="form-group col-md-6">
+                      <input type="text" class="form-control" id="inputEmail4" name="latitude" placeholder="위도" value="37.509864">
+                  </div>
+                  <div class="form-group col-md-6">
+                      <input type="text" class="form-control" id="inputPassword4" name="longitude" placeholder="경도" value="126.995498">
+                  </div>
               </div>
               <div class="form-group">
                 <textarea class="form-control" id="message-text" rows="15" placeholder="내용" name="content"></textarea>
@@ -181,7 +189,13 @@
             </button>
           </div>
           <div class="modal-body">
-            content
+          </div>
+          <div class="modal-footer">
+            <form action = "/joinin" method="post">
+              <input class="my-modal-form" name="num" hidden>
+              <input class="my-modal-form2" name="id" hidden>
+              <button type="submit" class="btn btn-primary" >참가하기</button>
+            </form>
           </div>
         </div>
       </div>
@@ -212,17 +226,34 @@
       var button = $(event.relatedTarget) // Button that triggered the modal
       var title = button.data('title')
       var content = button.data('content')
+      var name = button.data('name')
+      var login = button.data('loginid')
+      var num = button.data('num')
+      var partin = button.data('partin')
       // Extract info from data-* attributes
       var modal = $(this)
       modal.find('.modal-title').text(title)
-      modal.find('.modal-body').text(content)
+      modal.find('.modal-body').html("글쓴이:"+name+"<br><br>"+content+"<br><br>참가자<br>"+partin)
+      modal.find('.my-modal-form2').attr({
+        value : login
+      })
+      modal.find('.my-modal-form').attr({
+        value : num
+      })
       })
       // naver map script
+      <% for (i=0; i < articlenum; i++) { %>
+      var lati = <%=articles[i].latitude%>
+      var long = <%=articles[i].longitude%>
       var mapOptions = {
-          center: new naver.maps.LatLng(37.3595704, 127.105399),
-          zoom: 10
+        center: new naver.maps.LatLng(lati,long),
+        draggable: false,
+
+        zoom: 10
       };
-      var map = new naver.maps.Map('map', mapOptions);
+      var str = 'map'+<%=i%>
+      var map = new naver.maps.Map(str, mapOptions);
+      <% } %>
 
     </script>
   </body>
