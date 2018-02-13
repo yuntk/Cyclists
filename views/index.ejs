@@ -98,25 +98,9 @@
 
       <div class="album py-5 bg-light">
         <div class="container">
-          <div class="row">
+          <div id="main-articles" class="row">
             <!-- card start -->
-            <% for (i=0; i < articlenum; i++) { %>
-            <div class="col-md-6 col-lg-4">
-              <div class="card mb-4 box-shadow">
-                <div class="card-img-top" id="map<%=i%>" style="width:100%;height:320px"></div>
-                <div class="card-body">
-                  <p class="card-text"><%= articles[i].title%></p>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group">
-                      <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#viewmodal" data-title=<%=articles[i].title%> data-content=<%=articles[i].content%> data-name=<%=articles[i].name%> data-loginid=<%=userid%> data-num=<%=articles[i].num%> data-partin=<%=articles[i].partin%>>View</button>
-                      <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-                    </div>
-                    <small class="text-muted">9 mins</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <% } %>
+
             <!-- card end -->
           </div>
         </div>
@@ -215,46 +199,70 @@
     <script src="/dist/js/bootstrap.min.js"></script>
     <script src="/assets/js/vendor/holder.min.js"></script>
     <!-- My simple script -->
+    
     <script>
+      //write button popover  
       $('#poper').popover({
         trigger: 'focus'
       })
 
+      //wave location value
       $("#localselect").val(<%=location%>);
 
+      //insert each card
+      var articles = <%-articles%>;
+      var str = ""
+      for (i=0;i<articles.length;i++) {
+        str+='\
+        <div class="col-md-6 col-lg-4">\
+          <div class="card mb-4 box-shadow">\
+            <div class="card-img-top" id="map'+i+'" style="width:100%;height:320px"></div>\
+              <div class="card-body">\
+                <p class="card-text">'+articles[i].title+'</p>\
+                <div class="d-flex justify-content-between align-items-center">\
+                  <div class="btn-group">\
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#viewmodal" data-num='+i+' data-loginid=<%=userid%>>View</button>\
+                    <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>\
+                  </div>\
+                  <small class="text-muted">9 mins</small>\
+                </div>\
+              </div>\
+            </div>\
+          </div>\
+        </div>'
+      }
+      $('#main-articles').html(str)
+      //modal event
       $('#viewmodal').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget) // Button that triggered the modal
-      var title = button.data('title')
-      var content = button.data('content')
-      var name = button.data('name')
-      var login = button.data('loginid')
-      var num = button.data('num')
-      var partin = button.data('partin')
-      // Extract info from data-* attributes
-      var modal = $(this)
-      modal.find('.modal-title').text(title)
-      modal.find('.modal-body').html("글쓴이:"+name+"<br><br>"+content+"<br><br>참가자<br>"+partin)
-      modal.find('.my-modal-form2').attr({
-        value : login
-      })
-      modal.find('.my-modal-form').attr({
-        value : num
-      })
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var num = button.data('num')
+        var login = button.data('loginid')
+        // Extract info from data-* attributes
+        var modal = $(this)
+        modal.find('.modal-title').text(articles[num].title)
+        modal.find('.modal-body').html("글쓴이:"+articles[num].name+"<br><br>"+articles[num].content+"<br><br>참가자<br>"+articles[num].partin)
+        modal.find('.my-modal-form2').attr({
+          value : login
+        })
+        modal.find('.my-modal-form').attr({
+          value : articles[num].num
+        })
       })
       // naver map script
-      <% for (i=0; i < articlenum; i++) { %>
-      var lati = <%=articles[i].latitude%>
-      var long = <%=articles[i].longitude%>
+
+      for (i=0; i < articles.length; i++) {
+      var lati = articles[i].latitude
+      var long = articles[i].longitude
       var mapOptions = {
         center: new naver.maps.LatLng(lati,long),
         draggable: false,
-
+        scrollWheel: false,
+        pinciZoom: false,
         zoom: 10
       };
-      var str = 'map'+<%=i%>
+      var str = 'map'+i
       var map = new naver.maps.Map(str, mapOptions);
-      <% } %>
-
+      }
     </script>
   </body>
 </html>

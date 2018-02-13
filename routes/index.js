@@ -25,43 +25,45 @@ router.get('/', function(req, res, next) {
     var sql = "select num,latitude,longitude,title,location,content,article.id as id,name,date from article join user where article.id = user.id and location=? order by num desc limit 12"
     var arr = [req.session.location]
   }
+
+  //to get articls through mysql
+  //TODO : Separate two query statement 
   pool.getConnection((err, conn)=>{
     if(err) { console.log(err); return next(); }
     conn.query(sql, arr, (err, result)=>{
       conn.release();
       if(err) { console.log(err); return next(); }
-      obj.articlenum = result.length
       obj.articles = result
-      /*
-      console.log("impolog",obj.articles.length)
-      for(i=0; i<obj.articles.length;i++){
-        (i)=>{
-        var sql = "select name from participant join user where num=? and participant.id = user.id"
-        var str = obj.articles[i].num+""
-        var arr = [str]
-        console.log(arr)
-        pool.getConnection((err, conn)=>{
-          if(err) { console.log(err); return next(); }
-          conn.query(sql, arr, (err, result)=>{
-            conn.release();
+      var leng=result.length
+      for(i=0; i<result.length;i++){
+        ((i)=>{
+          obj.articles[i].partin = ""
+          var sql = "select name from participant join user where num=? and participant.id = user.id"
+          var arr = [result[i].num]
+          pool.getConnection((err, conn)=>{
             if(err) { console.log(err); return next(); }
-            console.log(result)
-            for (j=0; j<result.length;j++){
-              console.log(obj.articles[i].partin)
-            }
+            conn.query(sql, arr, (err, result)=>{
+              conn.release();
+              if(err) { console.log(err); return next(); }
+              var str =[]
+              for(j=0;j<result.length;j++){
+                str.push(result[j].name)
+              }
+              obj.articles[i].partin = str.join(", ")
+              if(i==leng-1){
+                obj.articles = JSON.stringify(obj.articles)
+                res.render('index', obj);
+              }
+            });
           });
-        });  
+        })(i)
       }
-      }
-       */
-      res.render('index', obj);
     });
   });
 });
 
 /* POST location information and reload */
 router.post('/', function(req, res) {
-  console.log(req.body.location)
   req.session.location = req.body.location
   res.redirect('/');
 });
