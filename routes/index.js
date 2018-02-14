@@ -34,29 +34,34 @@ router.get('/', function(req, res, next) {
       conn.release();
       if(err) { console.log(err); return next(); }
       obj.articles = result
-      var leng=result.length
-      for(i=0; i<result.length;i++){
-        ((i)=>{
-          obj.articles[i].partin = ""
-          var sql = "select name from participant join user where num=? and participant.id = user.id"
-          var arr = [result[i].num]
-          pool.getConnection((err, conn)=>{
-            if(err) { console.log(err); return next(); }
-            conn.query(sql, arr, (err, result)=>{
-              conn.release();
+      if(result.length == 0) {
+        obj.articles = JSON.stringify(obj.articles)
+        res.render('index', obj);
+      }else{
+        var leng=result.length
+        for(i=0; i<result.length;i++){
+          ((i)=>{
+            obj.articles[i].partin = ""
+            var sql = "select name from participant join user where num=? and participant.id = user.id"
+            var arr = [result[i].num]
+            pool.getConnection((err, conn)=>{
               if(err) { console.log(err); return next(); }
-              var str =[]
-              for(j=0;j<result.length;j++){
-                str.push(result[j].name)
-              }
-              obj.articles[i].partin = str.join(", ")
-              if(i==leng-1){
-                obj.articles = JSON.stringify(obj.articles)
-                res.render('index', obj);
-              }
+              conn.query(sql, arr, (err, result)=>{
+                conn.release();
+                if(err) { console.log(err); return next(); }
+                var str =[]
+                for(j=0;j<result.length;j++){
+                  str.push(result[j].name)
+                }
+                obj.articles[i].partin = str.join(", ")
+                if(i==leng-1){
+                  obj.articles = JSON.stringify(obj.articles)
+                  res.render('index', obj);
+                }
+              });
             });
-          });
-        })(i)
+          })(i)
+        }
       }
     });
   });
