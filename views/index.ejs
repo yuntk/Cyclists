@@ -73,6 +73,7 @@
         <div class="container">
           <h2 class="jumbotron-heading">여러 사람들과 라이딩을 즐겨보세요!</h2>
           <p class="lead text-muted">아래에서 지역을 선택하세요.</p>
+          <div id="naverpointmap" style="position:absolute;z-index:10000;background-color:#fff;border:solid 1px #333;padding:10px;display:none;"></div>
           <form method="post" action="/">
             <div class="input-group">
               <select class="custom-select" id="localselect" name="location">
@@ -248,21 +249,80 @@
           value : articles[num].num
         })
       })
-      // naver map script
-
+      // naver map script for articles
       for (i=0; i < articles.length; i++) {
-      var lati = articles[i].latitude
-      var long = articles[i].longitude
-      var mapOptions = {
-        center: new naver.maps.LatLng(lati,long),
-        draggable: false,
-        scrollWheel: false,
-        pinciZoom: false,
-        zoom: 10
-      };
-      var str = 'map'+i
-      var map = new naver.maps.Map(str, mapOptions);
+        var lati = articles[i].latitude
+        var long = articles[i].longitude
+        var mapOptions = {
+          center: new naver.maps.LatLng(lati,long),
+          draggable: false,
+          scrollWheel: false,
+          pinciZoom: false,
+          zoom: 10
+        };
+        var str = 'map'+i
+        var map = new naver.maps.Map(str, mapOptions);
+        var marker = new naver.maps.Marker({
+          position: new naver.maps.LatLng(lati,long),
+          map: map
+        })
       }
+/*
+      // naver map
+      var map = new naver.maps.Map('map', {
+        zoom: 4,
+        center: new naver.maps.LatLng(37.3614483, 127.1114883)
+      });
+
+      var markerList = [];
+      var menuLayer = $('#naverpointmap');
+
+      map.getPanes().floatPane.appendChild(menuLayer[0]);
+
+
+      naver.maps.Event.addListener(map, 'click', function(e) {
+          var marker = new naver.maps.Marker({
+              position: e.coord,
+              map: map
+          });
+
+          markerList.push(marker);
+      });
+
+      naver.maps.Event.addListener(map, 'keydown', function(e) {
+          var keyboardEvent = e.keyboardEvent,
+              keyCode = keyboardEvent.keyCode || keyboardEvent.which;
+
+          var ESC = 27;
+
+          if (keyCode === ESC) {
+              keyboardEvent.preventDefault();
+
+              for (var i=0, ii=markerList.length; i<ii; i++) {
+                  markerList[i].setMap(null);
+              }
+
+              markerList = [];
+
+              menuLayer.hide();
+          }
+      });
+
+      naver.maps.Event.addListener(map, 'mousedown', function(e) {
+          menuLayer.hide();
+      });
+
+      naver.maps.Event.addListener(map, 'rightclick', function(e) {
+          var coordHtml = 'Coord: '+ e.coord +'<br />Point: '+ e.point +'<br />Offset: '+ e.offset;
+
+          menuLayer.show().css({
+              left: e.offset.x,
+              top: e.offset.y
+          }).html(coordHtml);
+      });
+*/
+
+
     </script>
   </body>
 </html>
