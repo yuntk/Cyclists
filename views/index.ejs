@@ -140,12 +140,12 @@
                   <option value="3">Three</option>
                 </select>
                 <div class="input-group-append">
-                  <button id="mapbutton" class="btn btn-outline-primary" type="submit">Map</button>
+                  <button id="mapbutton" class="btn btn-outline-primary" type="button" onclick="showmap()">Map</button>
                 </div>
                 
               </div>
               <div class="form-group">
-                <div id="writemap" name="writemap" style="width:100%; height: 320px"></div>
+                <div id="writemap" name="writemap" style="width:100%; height: 320px; display:none"></div>
                 <input id="latvalue" name="latvalue" type="hidden">
                 <input id="lngvalue" name="lngvalue" type="hidden">
               </div>
@@ -314,6 +314,11 @@
               
           }
       });
+
+      //map toggle button
+      function showmap(){
+        $('#writemap').toggle()
+      }
 
     </script>
   </body>
