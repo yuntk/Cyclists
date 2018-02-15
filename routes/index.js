@@ -131,14 +131,15 @@ router.post('/signup', (req,res,next)=>{
 });
 
 /**
- * GET write form
+ * Post write 
  */
 router.post('/write', (req,res,next)=>{
   let title = req.body.title;
   let location = req.body.location;
   let content = req.body.content;
-  let lati = req.body.latitude;
-  let long = req.body.longitude;
+  let lati = req.body.latvalue;
+  let long = req.body.lngvalue;
+
   if(req.session.userid != undefined){
     var id = req.session.userid;
   }else{

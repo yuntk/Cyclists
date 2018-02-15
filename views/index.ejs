@@ -73,7 +73,6 @@
         <div class="container">
           <h2 class="jumbotron-heading">여러 사람들과 라이딩을 즐겨보세요!</h2>
           <p class="lead text-muted">아래에서 지역을 선택하세요.</p>
-          <div id="naverpointmap" style="position:absolute;z-index:10000;background-color:#fff;border:solid 1px #333;padding:10px;display:none;"></div>
           <form method="post" action="/">
             <div class="input-group">
               <select class="custom-select" id="localselect" name="location">
@@ -133,21 +132,22 @@
               <div class="form-group">
                 <input type="text" class="form-control" id="recipient-name" placeholder="제목" name="title">
               </div>
-              <div class="form-group">
+              <div class="input-group form-group">
                 <select class="custom-select" id="inputGroupSelect04" name="location">
                   <option value="0" selected>모든 지역</option>
                   <option value="1">One</option>
                   <option value="2">Two</option>
                   <option value="3">Three</option>
                 </select>
+                <div class="input-group-append">
+                  <button id="mapbutton" class="btn btn-outline-primary" type="submit">Map</button>
+                </div>
+                
               </div>
-              <div class="form-row">
-                  <div class="form-group col-md-6">
-                      <input type="text" class="form-control" id="inputEmail4" name="latitude" placeholder="위도" value="37.509864">
-                  </div>
-                  <div class="form-group col-md-6">
-                      <input type="text" class="form-control" id="inputPassword4" name="longitude" placeholder="경도" value="126.995498">
-                  </div>
+              <div class="form-group">
+                <div id="writemap" name="writemap" style="width:100%; height: 320px"></div>
+                <input id="latvalue" name="latvalue" type="hidden">
+                <input id="lngvalue" name="lngvalue" type="hidden">
               </div>
               <div class="form-group">
                 <textarea class="form-control" id="message-text" rows="15" placeholder="내용" name="content"></textarea>
@@ -267,18 +267,14 @@
           map: map
         })
       }
-/*
+
       // naver map
-      var map = new naver.maps.Map('map', {
+      var map = new naver.maps.Map('writemap', {
         zoom: 4,
         center: new naver.maps.LatLng(37.3614483, 127.1114883)
       });
 
       var markerList = [];
-      var menuLayer = $('#naverpointmap');
-
-      map.getPanes().floatPane.appendChild(menuLayer[0]);
-
 
       naver.maps.Event.addListener(map, 'click', function(e) {
           var marker = new naver.maps.Marker({
@@ -286,6 +282,18 @@
               map: map
           });
 
+          $('#latvalue').attr({
+            value:e.coord._lat
+          })
+
+          $('#lngvalue').attr({
+            value:e.coord._lng
+          })
+
+          for (var i=0, ii=markerList.length; i<ii; i++) {
+              markerList[i].setMap(null);
+          }
+          markerList = [];
           markerList.push(marker);
       });
 
@@ -303,25 +311,9 @@
               }
 
               markerList = [];
-
-              menuLayer.hide();
+              
           }
       });
-
-      naver.maps.Event.addListener(map, 'mousedown', function(e) {
-          menuLayer.hide();
-      });
-
-      naver.maps.Event.addListener(map, 'rightclick', function(e) {
-          var coordHtml = 'Coord: '+ e.coord +'<br />Point: '+ e.point +'<br />Offset: '+ e.offset;
-
-          menuLayer.show().css({
-              left: e.offset.x,
-              top: e.offset.y
-          }).html(coordHtml);
-      });
-*/
-
 
     </script>
   </body>
