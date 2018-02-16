@@ -17,7 +17,6 @@ router.get('/', function(req, res, next) {
     "location": req.session.location,
     "name": req.session.name,
   }
-  console.log(obj)
   if (req.session.location == 0 || req.session.location == undefined) {
     var sql = "select num,latitude,longitude,title,location,content,article.id as id,name,date from article join user where article.id = user.id order by num desc limit 12"
     var arr = []
@@ -54,6 +53,7 @@ router.get('/', function(req, res, next) {
                   str.push(result[j].name)
                 }
                 obj.articles[i].partin = str.join(", ")
+                console.log("joinpeoplelog : "+obj.articles[i].partin)
                 if(i==leng-1){
                   obj.articles = JSON.stringify(obj.articles)
                   res.render('index', obj);
@@ -80,7 +80,6 @@ router.get('/signin', (req,res,next)=>{
 
 /* POST Signin ID & password */
 router.post('/signin', (req,res,next)=>{
-  console.log(req.body)
   var id = req.body.id;
   var password = req.body.password;
   var sql = "select * from user where id=?";
@@ -112,7 +111,6 @@ router.get('/signup', (req,res,next)=>{
  * POST sign up request
  */
 router.post('/signup', (req,res,next)=>{
-  console.log('req.boby=', req.body);
   var id = req.body.id;
   var password = req.body.password;
   var name = req.body.name;
@@ -136,7 +134,7 @@ router.post('/signup', (req,res,next)=>{
 router.post('/write', (req,res,next)=>{
   let title = req.body.title;
   let location = req.body.location;
-  let content = req.body.content;
+  let content = req.body.content.replace(/\r\n/gm,"<br>").replace(/\n/gm,"<br>");
   let lati = req.body.latvalue;
   let long = req.body.lngvalue;
 

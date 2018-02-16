@@ -241,7 +241,7 @@
         // Extract info from data-* attributes
         var modal = $(this)
         modal.find('.modal-title').text(articles[num].title)
-        modal.find('.modal-body').html("글쓴이:"+articles[num].name+"<br><br>"+articles[num].content+"<br><br>참가자<br>"+articles[num].partin)
+        modal.find('.modal-body').html("글쓴이:"+articles[num].name+"<br><br><p style='width:100%'>"+articles[num].content+"</p><br><br>참가자<br>"+articles[num].partin)
         modal.find('.my-modal-form2').attr({
           value : login
         })
