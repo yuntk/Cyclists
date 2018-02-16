@@ -53,8 +53,9 @@ router.get('/', function(req, res, next) {
                   str.push(result[j].name)
                 }
                 obj.articles[i].partin = str.join(", ")
-                console.log("joinpeoplelog : "+obj.articles[i].partin)
-                if(i==leng-1){
+                console.log("joinpeoplelog : "+obj.articles[i].partin+i)
+                if(--leng == 0){
+                  console.log("this is redering")
                   obj.articles = JSON.stringify(obj.articles)
                   res.render('index', obj);
                 }
