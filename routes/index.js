@@ -183,7 +183,15 @@ router.post('/joinin', (req,res,next)=>{
       res.redirect('/');
     });
   });
-  
 });
+
+/* kakao chat bot api control*/
+router.get('/keyboard', (req,res,next)=>{
+  let obj = {
+    "type":"buttons",
+    "buttons" : ["1","2","3"]
+  }
+  res.send(obj)
+})
 
 module.exports = router;
